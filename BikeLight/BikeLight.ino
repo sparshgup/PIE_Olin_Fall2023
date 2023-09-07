@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 const int LED[] = {8, 9, 10, 11, 12};     // LEDs connected
 const uint8_t SW1 = 7;                    // SW1 connected to D7
 const uint8_t POT = 0;                    // POT wiper is connected to A0
