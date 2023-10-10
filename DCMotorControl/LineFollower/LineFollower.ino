@@ -12,7 +12,7 @@ int IRSensor4 = A4; // IR sensor pin for middle-right sensor
 int IRSensor5 = A5; // IR sensor pin for right-most sensor
 
 // IR sensor cutoff value reading for determing whether line/not line
-int cutoffValue = 300;
+int cutoffValue = 400;
 
 // Specify PID initial parameters
 double Input, Output, Setpoint;
@@ -26,9 +26,9 @@ void setup() {
   
   // Intialize motors
   myMotor1->setSpeed(1);  // Set Motor 1 speed
-  myMotor1->release()
+  myMotor1->release();
   myMotor2->setSpeed(1);  // Set Motor 2 speed
-  myMotor2->release()
+  myMotor2->release();
 
   // Initialize IR sensors
   pinMode(IRSensor2, INPUT); // IR Sensor 2 pin INPUT
@@ -44,6 +44,8 @@ void setup() {
 
   // Check if serial is working or not
   Serial.println("===== Serial Working ====="); 
+  Serial.println("==== IR sensor readings ====");
+  Serial.println("| 2 | 3 | 4 | 5 |");
 }
 
 void loop() {
@@ -53,6 +55,12 @@ void loop() {
   int IR4 = analogRead(IRSensor4); // Set the IR Sensor 4 as Input
   int IR5 = analogRead(IRSensor5); // Set the IR Sensor 5 as Input
 
+  // Print sensor readings
+  Serial.println(IR2);
+  Serial.print(IR3);
+  Serial.print(IR4);
+  Serial.print(IR5);
+
   // Classify IR sensor readings as 0 or 1 based on cutoffValue
   int IR2state = (IR2 > cutoffValue) ? 1 : 0;
   int IR3state = (IR3 > cutoffValue) ? 1 : 0;
@@ -60,27 +68,28 @@ void loop() {
   int IR5state = (IR5 > cutoffValue) ? 1 : 0;
 
   // Print sensor readings
-  Serial.print("==== IR sensor readings ====");
-  Serial.print("| 2 | 3 | 4 | 5 |");
-  Serial.print("| ", IR2State, " | ", IR3State, " | ", IR4State, " | ", IR5State, " |");
+  Serial.println(IR2state);
+  Serial.print(IR3state);
+  Serial.print(IR4state);
+  Serial.print(IR5state);
 
   // Calculate error to determine the direction of the line
-  weightedError = (sensor2State * 2 + sensor4State - sensor5State * 2) * 0.5;
+  double weightedError = (IR2state * 2 + IR4state - IR5state * 2) * 0.5;
 
   // Update PID Input based on weightedError
   Input = weightedError;
 
   // Compute PID control output
-  myPID.compute();
+  myPID.Compute();
 
   // Adjust motor speeds based on PID input
   int motor1Speed = constrain(1 + Output, 0, 255);
-  int motor1Speed = constrain(1 + Output, 0, 255);
+  int motor2Speed = constrain(1 - Output, 0, 255);
 
   myMotor1->setSpeed(motor1Speed);
   myMotor2->setSpeed(motor2Speed); 
 
   // Run motors
-  myMotor1->step(1, FORWARD, INTERLEAVE)
-  myMotor2->step(1, FORWARD, INTERLEAVE)
+  myMotor1->step(1, FORWARD);
+  myMotor2->step(1, FORWARD);
 }
