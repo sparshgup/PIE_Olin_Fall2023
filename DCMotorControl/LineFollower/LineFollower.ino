@@ -3,8 +3,8 @@
 #include <PID_v1.h>
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
-Adafruit_StepperMotor *myMotor1 = AFMS.getStepper(10, 1); 
-Adafruit_StepperMotor *myMotor2 = AFMS.getStepper(10, 2);
+Adafruit_DCMotor *myMotor1 = AFMS.getMotor(1); 
+Adafruit_DCMotor *myMotor2 = AFMS.getMotor(2);
 
 int IRSensor2 = A2; // IR sensor pin for left-most sensor
 int IRSensor3 = A3; // IR sensor pin for middle-left sensor
@@ -19,16 +19,14 @@ double Input, Output, Setpoint;
 PID myPID(&Input, &Output, &Setpoint,2,0.1,0.5, DIRECT);
 
 void setup() {
-  Serial.begin(115200); // Set Serial Baud Rate
+  Serial.begin(600); // Set Serial Baud Rate
 
   // Start motor with the default frequency 1.6KHz
   AFMS.begin();  
   
   // Intialize motors
-  myMotor1->setSpeed(1);  // Set Motor 1 speed
-  myMotor1->release();
-  myMotor2->setSpeed(1);  // Set Motor 2 speed
-  myMotor2->release();
+  myMotor1->setSpeed(0);  // Set Motor 1 speed
+  myMotor2->setSpeed(0);  // Set Motor 2 speed
 
   // Initialize IR sensors
   pinMode(IRSensor2, INPUT); // IR Sensor 2 pin INPUT
@@ -55,12 +53,6 @@ void loop() {
   int IR4 = analogRead(IRSensor4); // Set the IR Sensor 4 as Input
   int IR5 = analogRead(IRSensor5); // Set the IR Sensor 5 as Input
 
-  // Print sensor readings
-  Serial.println(IR2);
-  Serial.print(IR3);
-  Serial.print(IR4);
-  Serial.print(IR5);
-
   // Classify IR sensor readings as 0 or 1 based on cutoffValue
   int IR2state = (IR2 > cutoffValue) ? 1 : 0;
   int IR3state = (IR3 > cutoffValue) ? 1 : 0;
@@ -74,7 +66,8 @@ void loop() {
   Serial.print(IR5state);
 
   // Calculate error to determine the direction of the line
-  double weightedError = (IR2state * 2 + IR4state - IR5state * 2) * 0.5;
+  double weightedError = (IR2state + IR3state + IR4state + IR5state) / 4.0;
+  weightedError = 1.0 - weightedError;
 
   // Update PID Input based on weightedError
   Input = weightedError;
@@ -83,13 +76,13 @@ void loop() {
   myPID.Compute();
 
   // Adjust motor speeds based on PID input
-  int motor1Speed = constrain(1 + Output, 0, 255);
-  int motor2Speed = constrain(1 - Output, 0, 255);
+  int motor1Speed = constrain(40 - Output, 1, 100);
+  int motor2Speed = constrain(40 + Output, 1, 100);
 
   myMotor1->setSpeed(motor1Speed);
   myMotor2->setSpeed(motor2Speed); 
 
   // Run motors
-  myMotor1->step(1, FORWARD);
-  myMotor2->step(1, FORWARD);
+  myMotor1->run(FORWARD);
+  myMotor2->run(FORWARD);
 }
