@@ -3,23 +3,20 @@
 #include <PID_v1.h>
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
-Adafruit_DCMotor *myMotor1 = AFMS.getMotor(1); 
-Adafruit_DCMotor *myMotor2 = AFMS.getMotor(2);
+Adafruit_DCMotor *myMotor1 = AFMS.getMotor(3); 
+Adafruit_DCMotor *myMotor2 = AFMS.getMotor(4);
 
 int IRSensor2 = A2; // IR sensor pin for left-most sensor
 int IRSensor3 = A3; // IR sensor pin for middle-left sensor
 int IRSensor4 = A4; // IR sensor pin for middle-right sensor
 int IRSensor5 = A5; // IR sensor pin for right-most sensor
 
-// IR sensor cutoff value reading for determing whether line/not line
-int cutoffValue = 400;
-
 // Specify PID initial parameters
 double Input, Output, Setpoint;
 PID myPID(&Input, &Output, &Setpoint,2,0.1,0.5, DIRECT);
 
 void setup() {
-  Serial.begin(600); // Set Serial Baud Rate
+  Serial.begin(9600); // Set Serial Baud Rate
 
   // Start motor with the default frequency 1.6KHz
   AFMS.begin();  
@@ -53,21 +50,18 @@ void loop() {
   int IR4 = analogRead(IRSensor4); // Set the IR Sensor 4 as Input
   int IR5 = analogRead(IRSensor5); // Set the IR Sensor 5 as Input
 
-  // Classify IR sensor readings as 0 or 1 based on cutoffValue
-  int IR2state = (IR2 > cutoffValue) ? 1 : 0;
-  int IR3state = (IR3 > cutoffValue) ? 1 : 0;
-  int IR4state = (IR4 > cutoffValue) ? 1 : 0;
-  int IR5state = (IR5 > cutoffValue) ? 1 : 0;
-
   // Print sensor readings
-  Serial.println(IR2state);
-  Serial.print(IR3state);
-  Serial.print(IR4state);
-  Serial.print(IR5state);
+  Serial.println(IR2);
+  Serial.print("|");
+  Serial.print(IR3);
+  Serial.print("|");
+  Serial.print(IR4);
+  Serial.print("|");
+  Serial.print(IR5);
+  Serial.print("|");
 
   // Calculate error to determine the direction of the line
-  double weightedError = (IR2state + IR3state + IR4state + IR5state) / 4.0;
-  weightedError = 1.0 - weightedError;
+  double weightedError = (IR2 + IR3 + IR4 + IR5) / 4.0;
 
   // Update PID Input based on weightedError
   Input = weightedError;
@@ -76,8 +70,8 @@ void loop() {
   myPID.Compute();
 
   // Adjust motor speeds based on PID input
-  int motor1Speed = constrain(40 - Output, 1, 100);
-  int motor2Speed = constrain(40 + Output, 1, 100);
+  int motor1Speed = constrain(40 + Output, 30, 60);
+  int motor2Speed = constrain(40 + Output, 30, 60);
 
   myMotor1->setSpeed(motor1Speed);
   myMotor2->setSpeed(motor2Speed); 
