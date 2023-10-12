@@ -1,6 +1,5 @@
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
-#include <PID_v1.h>
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
 Adafruit_DCMotor *myMotor1 = AFMS.getMotor(3); 
@@ -12,7 +11,7 @@ int IRSensor4 = A2; // IR sensor pin for middle-right sensor
 int IRSensor5 = A3; // IR sensor pin for right-most sensor
 
 int cutoffValue = 200;
-int speed = 40;
+int speed = 30;
 
 void setup() {
 
@@ -126,25 +125,21 @@ void loop() {
 
   else if (IR2state==1 & IR3state==1 & IR4state==1 & IR5state==0){
     int motor1Speed = 0;
-    int motor2Speed = speed+20;
+    int motor2Speed = speed+30;
 
     myMotor1->setSpeed(motor1Speed);
     myMotor2->setSpeed(motor2Speed); 
-    delay(200);
+    delay(400);
   }
 
   else if (IR2state==1 & IR3state==1 & IR4state==0 & IR5state==0){
     int motor1Speed = 0;
     int motor2Speed = speed+20;
-
+    
     myMotor1->setSpeed(motor1Speed);
     myMotor2->setSpeed(motor2Speed); 
     delay(200);
   }
-  // Calculate error to determine the direction of the line
-  //double weightedError = (IR2state + IR3state + IR4state + IR5state) / 4.0;
-
-  // Adjust motor speeds based on PID input
 
   // Run motors
   myMotor1->run(FORWARD);
