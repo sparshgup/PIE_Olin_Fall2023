@@ -28,10 +28,6 @@ while reading_count < max_readings:
     elif len(lineOfData) > 0:
         data = list(map(float, lineOfData.split(',')))
 
-        # Assuming the data list contains the following:
-        # Motor 1 speed at index 0, Motor 2 speed at index 1
-        # IR Sensor 2 reading at index 2, IR Sensor 3 reading at index 3
-        # IR Sensor 4 reading at index 4, IR Sensor 5 reading at index 5
         sensor0_readings.append(data[0])
         sensor1_readings.append(data[1])
         sensor2_readings.append(data[2])
@@ -41,29 +37,31 @@ while reading_count < max_readings:
 
         reading_count += 1
 
-# Create subplots for motor speeds and sensor readings
-plt.figure(figsize=(12, 8))
+# Create subplots for Motor 1 speed vs all IR sensors and Motor 2 speed vs all IR sensors
+plt.figure(figsize=(16, 6))
 
-# Motor Speeds
-plt.subplot(2, 1, 1)
-plt.plot(motor1_speeds, label='Motor 1 Speed')
-plt.plot(motor2_speeds, label='Motor 2 Speed')
-plt.xlabel('Time (samples)')
-plt.ylabel('Speed')
+# Motor 1 Speed vs IR Sensor Data
+plt.subplot(1, 2, 1)
+plt.plot(sensor0_readings, motor1_speeds, 'o', label='Motor 1 Speed vs IR Sensor 0')
+plt.plot(sensor1_readings, motor1_speeds, 'o', label='Motor 1 Speed vs IR Sensor 1')
+plt.plot(sensor2_readings, motor1_speeds, 'o', label='Motor 1 Speed vs IR Sensor 2')
+plt.plot(sensor3_readings, motor1_speeds, 'o', label='Motor 1 Speed vs IR Sensor 3')
+plt.xlabel('IR Sensor Readings')
+plt.ylabel('Motor 1 Speed')
 plt.legend()
-plt.title('Motor Speeds Over Time')
+plt.title('Motor 1 Speed vs IR Sensors')
 plt.grid(True)
 
-# Sensor Readings
-plt.subplot(2, 1, 2)
-plt.plot(sensor0_readings, label='IR Sensor 2')
-plt.plot(sensor1_readings, label='IR Sensor 3')
-plt.plot(sensor2_readings, label='IR Sensor 4')
-plt.plot(sensor3_readings, label='IR Sensor 5')
-plt.xlabel('Time (samples)')
-plt.ylabel('Reading')
+# Motor 2 Speed vs IR Sensor Data
+plt.subplot(1, 2, 2)
+plt.plot(sensor0_readings, motor2_speeds, 'o', label='Motor 2 Speed vs IR Sensor 0')
+plt.plot(sensor1_readings, motor2_speeds, 'o', label='Motor 2 Speed vs IR Sensor 1')
+plt.plot(sensor2_readings, motor2_speeds, 'o', label='Motor 2 Speed vs IR Sensor 2')
+plt.plot(sensor3_readings, motor2_speeds, 'o', label='Motor 2 Speed vs IR Sensor 3')
+plt.xlabel('IR Sensor Readings')
+plt.ylabel('Motor 2 Speed')
 plt.legend()
-plt.title('IR Sensor Readings Over Time')
+plt.title('Motor 2 Speed vs IR Sensors')
 plt.grid(True)
 
 plt.tight_layout()
