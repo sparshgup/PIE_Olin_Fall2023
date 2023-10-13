@@ -15,7 +15,7 @@ sensor2_readings = []
 sensor3_readings = []
 
 # Set the maximum number of readings
-max_readings = 1000
+max_readings = 4000
 reading_count = 0
 
 # Main loop to read data from the Arduino, then display it
@@ -26,6 +26,7 @@ while reading_count < max_readings:
         break
 
     elif len(lineOfData) > 0:
+        print(lineOfData)
         data = list(map(float, lineOfData.split(',')))
 
         sensor0_readings.append(data[0])

@@ -29,13 +29,6 @@ void setup() {
   pinMode(IRSensor3, INPUT); // IR Sensor 3 pin INPUT
   pinMode(IRSensor4, INPUT); // IR Sensor 4 pin INPUT
   pinMode(IRSensor5, INPUT); // IR Sensor 5 pin INPUT
-
-
-  // Check if serial is working or not
-  Serial.println("");
-  Serial.println("===== Serial Working ====="); 
-  Serial.println("==== IR sensor readings ====");
-  Serial.println("| 2 | 3 | 4 | 5 |");
 }
 
 void loop() {
@@ -45,21 +38,33 @@ void loop() {
   int IR4 = analogRead(IRSensor4); // Set the IR Sensor 4 as Input
   int IR5 = analogRead(IRSensor5); // Set the IR Sensor 5 as Input
 
+    // Print sensor readings
+  Serial.print(IR2);
+  Serial.print(",");
+  Serial.print(IR3);
+  Serial.print(",");
+  Serial.print(IR4);
+  Serial.print(",");
+  Serial.print(IR5);
+  Serial.print(",");
+
   // Classify IR sensor readings as 0 or 1 based on cutoffValue
   int IR2state = (IR2 > cutoffValue) ? 1 : 0;
   int IR3state = (IR3 > cutoffValue) ? 1 : 0;
   int IR4state = (IR4 > cutoffValue) ? 1 : 0;
   int IR5state = (IR5 > cutoffValue) ? 1 : 0;
 
-  // Print sensor readings
-  Serial.print(IR2state);
-  Serial.print(",");
-  Serial.print(IR3state);
-  Serial.print(",");
-  Serial.print(IR4state);
-  Serial.print(",");
-  Serial.print(IR5state);
-  Serial.print(",");
+  // Modify motor speeds using serial commands
+  if (Serial.available() > 0) {
+    char command = Serial.read();
+    if (command == 'W') {
+      // Increase speed
+      speed += 10;
+    } else if (command == 'S') {
+      // Decrease speed
+      speed -= 10;
+    }
+  }
 
   if (IR2state==0 & IR3state==0 & IR4state==0 & IR5state==0){
     int motor1Speed = speed;
@@ -73,8 +78,8 @@ void loop() {
     Serial.println(motor2Speed);
   }
   if (IR2state==1 & IR3state==1 & IR4state==1 & IR5state==1){
-    int motor1Speed = 0;
-    int motor2Speed = 0;
+    int motor1Speed = speed;
+    int motor2Speed = speed;
 
     myMotor1->setSpeed(motor1Speed);
     myMotor2->setSpeed(motor2Speed); 
@@ -147,7 +152,7 @@ void loop() {
     }
     myMotor1->setSpeed(speed);
     myMotor2->setSpeed(0);
-    delay(100);
+    delay(200);
   }
 
   else if (IR2state==1 & IR3state==1 & IR4state==0 & IR5state==0){
@@ -167,7 +172,7 @@ void loop() {
 
     myMotor1->setSpeed(speed);
     myMotor2->setSpeed(0);
-    delay(100);
+    delay(200);
   }
 
   // Run motors
