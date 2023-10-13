@@ -5,10 +5,10 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 Adafruit_DCMotor *myMotor1 = AFMS.getMotor(3); 
 Adafruit_DCMotor *myMotor2 = AFMS.getMotor(4);
 
-int IRSensor0 = A0; // IR sensor pin for left-most sensor
-int IRSensor1 = A1; // IR sensor pin for middle-left sensor
-int IRSensor2 = A2; // IR sensor pin for middle-right sensor
-int IRSensor3 = A3; // IR sensor pin for right-most sensor
+int IRSensor2 = A0; // IR sensor pin for left-most sensor
+int IRSensor3 = A1; // IR sensor pin for middle-left sensor
+int IRSensor4 = A2; // IR sensor pin for middle-right sensor
+int IRSensor5 = A3; // IR sensor pin for right-most sensor
 
 int cutoffValue = 200;
 int speed = 30;
@@ -25,130 +25,123 @@ void setup() {
   myMotor2->setSpeed(0);  // Set Motor 2 speed
 
   // Initialize IR sensors
-  pinMode(IRSensor0, INPUT); // IR Sensor 0 pin INPUT
-  pinMode(IRSensor1, INPUT); // IR Sensor 1 pin INPUT
   pinMode(IRSensor2, INPUT); // IR Sensor 2 pin INPUT
   pinMode(IRSensor3, INPUT); // IR Sensor 3 pin INPUT
+  pinMode(IRSensor4, INPUT); // IR Sensor 4 pin INPUT
+  pinMode(IRSensor5, INPUT); // IR Sensor 5 pin INPUT
+
+
+  // Check if serial is working or not
+  Serial.println("");
+  Serial.println("===== Serial Working ====="); 
+  Serial.println("==== IR sensor readings ====");
+  Serial.println("| 2 | 3 | 4 | 5 |");
 }
 
 void loop() {
   // IR sensor readings
-  int IR0 = analogRead(IRSensor0); // Set the IR Sensor 1 as Input
-  int IR1 = analogRead(IRSensor0); // Set the IR Sensor 2 as Input
-  int IR2 = analogRead(IRSensor0); // Set the IR Sensor 3 as Input
-  int IR3 = analogRead(IRSensor0); // Set the IR Sensor 4 as Input
-
-  // Output IR readings and motor speeds to serial
-  Serial.println(IR0);
-  Serial.print(",");
-  Serial.print(IR1);
-  Serial.print(",");
-  Serial.print(IR2);
-  Serial.print(",");
-  Serial.print(IR3);
+  int IR2 = analogRead(IRSensor2); // Set the IR Sensor 2 as Input
+  int IR3 = analogRead(IRSensor3); // Set the IR Sensor 3 as Input
+  int IR4 = analogRead(IRSensor4); // Set the IR Sensor 4 as Input
+  int IR5 = analogRead(IRSensor5); // Set the IR Sensor 5 as Input
 
   // Classify IR sensor readings as 0 or 1 based on cutoffValue
-  int IR0state = (IR0 > cutoffValue) ? 1 : 0;
-  int IR1state = (IR1 > cutoffValue) ? 1 : 0;
   int IR2state = (IR2 > cutoffValue) ? 1 : 0;
   int IR3state = (IR3 > cutoffValue) ? 1 : 0;
+  int IR4state = (IR4 > cutoffValue) ? 1 : 0;
+  int IR5state = (IR5 > cutoffValue) ? 1 : 0;
 
-  // IR sensor state-based cases to follow the line
-  // Modify motor speeds based on that
-  if (IR0state==0 & IR1state==0 & IR2state==0 & IR3state==0){
+  // Print sensor readings
+  Serial.print(IR2state);
+  Serial.print(",");
+  Serial.print(IR3state);
+  Serial.print(",");
+  Serial.print(IR4state);
+  Serial.print(",");
+  Serial.print(IR5state);
+  Serial.print(",");
+
+  if (IR2state==0 & IR3state==0 & IR4state==0 & IR5state==0){
     int motor1Speed = speed;
     int motor2Speed = speed;
-
-    Serial.print(",");
-    Serial.print(motor1Speed);
-    Serial.print(",");
-    Serial.print(motor2Speed);
 
     myMotor1->setSpeed(motor1Speed);
     myMotor2->setSpeed(motor2Speed); 
 
+    Serial.print(motor1Speed);
+    Serial.print(",");
+    Serial.println(motor2Speed);
   }
-  if (IR0state==1 & IR1state==1 & IR2state==1 & IR3state==1){
-    int motor1Speed = speed;
-    int motor2Speed = speed;
-
-    Serial.print(",");
-    Serial.print(motor1Speed);
-    Serial.print(",");
-    Serial.print(motor2Speed);
+  if (IR2state==1 & IR3state==1 & IR4state==1 & IR5state==1){
+    int motor1Speed = 0;
+    int motor2Speed = 0;
 
     myMotor1->setSpeed(motor1Speed);
     myMotor2->setSpeed(motor2Speed); 
 
+    Serial.print(motor1Speed);
+    Serial.print(",");
+    Serial.println(motor2Speed);
   } 
-  else if (IR0state==0 & IR1state==0 & IR2state==1 & IR3state==0){
+  else if (IR2state==0 & IR3state==0 & IR4state==1 & IR5state==0){
     int motor1Speed = speed;
     int motor2Speed = 0;
 
-    Serial.print(",");
-    Serial.print(motor1Speed);
-    Serial.print(",");
-    Serial.print(motor2Speed);
-
     myMotor1->setSpeed(motor1Speed);
     myMotor2->setSpeed(motor2Speed); 
 
+    Serial.print(motor1Speed);
+    Serial.print(",");
+    Serial.println(motor2Speed);
   }
 
-  else if (IR0state==0 & IR1state==0 & IR2state==0 & IR3state==1){
+  else if (IR2state==0 & IR3state==0 & IR4state==0 & IR5state==1){
     int motor1Speed = speed;
     int motor2Speed = 0;
 
-    Serial.print(",");
-    Serial.print(motor1Speed);
-    Serial.print(",");
-    Serial.print(motor2Speed);
-
     myMotor1->setSpeed(motor1Speed);
     myMotor2->setSpeed(motor2Speed); 
 
+    Serial.print(motor1Speed);
+    Serial.print(",");
+    Serial.println(motor2Speed);
   }
 
-  else if (IR0state==0 & IR1state==1 & IR2state==0 & IR3state==0){
+  else if (IR2state==0 & IR3state==1 & IR4state==0 & IR5state==0){
     int motor1Speed = 0;
     int motor2Speed = speed;
 
-    Serial.print(",");
-    Serial.print(motor1Speed);
-    Serial.print(",");
-    Serial.print(motor2Speed);
-
     myMotor1->setSpeed(motor1Speed);
     myMotor2->setSpeed(motor2Speed); 
 
+    Serial.print(motor1Speed);
+    Serial.print(",");
+    Serial.println(motor2Speed);
   }
 
-  else if (IR0state==1 & IR1state==0 & IR2state==0 & IR3state==0){
+  else if (IR2state==1 & IR3state==0 & IR4state==0 & IR5state==0){
     int motor1Speed = 0;
     int motor2Speed = speed;
 
-    Serial.print(",");
-    Serial.print(motor1Speed);
-    Serial.print(",");
-    Serial.print(motor2Speed);
-
     myMotor1->setSpeed(motor1Speed);
     myMotor2->setSpeed(motor2Speed); 
 
+    Serial.print(motor1Speed);
+    Serial.print(",");
+    Serial.println(motor2Speed);
   }
 
-  else if (IR0state==1 & IR1state==1 & IR2state==1 & IR3state==0){
+  else if (IR2state==1 & IR3state==1 & IR4state==1 & IR5state==0){
     int motor1Speed = 0;
     int motor2Speed = speed+30;
 
-    Serial.print(",");
     Serial.print(motor1Speed);
     Serial.print(",");
-    Serial.print(motor2Speed);
+    Serial.println(motor2Speed);
 
-    while (IR3state==0){
-      IR3 = analogRead(IRSensor3); // Set the IR Sensor 5 as Input
-      IR3state = (IR3 > cutoffValue) ? 1 : 0;
+    while (IR5state==0){
+      IR5 = analogRead(IRSensor5); // Set the IR Sensor 5 as Input
+      IR5state = (IR5 > cutoffValue) ? 1 : 0;
       myMotor1->setSpeed(motor1Speed);
       myMotor2->setSpeed(motor2Speed); 
     }
@@ -157,18 +150,17 @@ void loop() {
     delay(100);
   }
 
-  else if (IR0state==1 & IR1state==1 & IR2state==0 & IR3state==0){
+  else if (IR2state==1 & IR3state==1 & IR4state==0 & IR5state==0){
     int motor1Speed = 0;
     int motor2Speed = speed+20;
 
-    Serial.print(",");
     Serial.print(motor1Speed);
     Serial.print(",");
-    Serial.print(motor2Speed);
+    Serial.println(motor2Speed);
     
-    while (IR3state==0){
-      IR3 = analogRead(IRSensor3);
-      IR3state = (IR3 > cutoffValue) ? 1 : 0;
+    while (IR5state==0){
+      IR5 = analogRead(IRSensor5); // Set the IR Sensor 5 as Input
+      IR5state = (IR5 > cutoffValue) ? 1 : 0;
       myMotor1->setSpeed(motor1Speed);
       myMotor2->setSpeed(motor2Speed);
     }
