@@ -15,7 +15,7 @@ sensor2_readings = []
 sensor3_readings = []
 
 # Set the maximum number of readings
-max_readings = 100
+max_readings = 1000
 reading_count = 0
 
 # Main loop to read data from the Arduino, then display it

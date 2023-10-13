@@ -46,10 +46,6 @@ void loop() {
   Serial.print(IR2);
   Serial.print(",");
   Serial.print(IR3);
-  Serial.print(",");
-  Serial.print(myMotor1->readSpeed());
-  Serial.print(",");
-  Serial.print(myMotor2->readSpeed());
 
   // Classify IR sensor readings as 0 or 1 based on cutoffValue
   int IR0state = (IR0 > cutoffValue) ? 1 : 0;
@@ -116,7 +112,7 @@ void loop() {
     int motor2Speed = speed+30;
 
     while (IR3state==0){
-      IR5 = analogRead(IRSensor5); // Set the IR Sensor 5 as Input
+      IR3 = analogRead(IRSensor3); // Set the IR Sensor 5 as Input
       IR3state = (IR3 > cutoffValue) ? 1 : 0;
       myMotor1->setSpeed(motor1Speed);
       myMotor2->setSpeed(motor2Speed); 
@@ -141,6 +137,11 @@ void loop() {
     myMotor2->setSpeed(0);
     delay(100);
   }
+
+  Serial.print(",");
+  Serial.print(myMotor1->readSpeed());
+  Serial.print(",");
+  Serial.print(myMotor2->readSpeed());
 
   // Run motors
   myMotor1->run(FORWARD);
