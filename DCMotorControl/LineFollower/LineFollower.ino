@@ -138,7 +138,7 @@ void loop() {
 
   else if (IR2state==1 & IR3state==1 & IR4state==1 & IR5state==0){
     int motor1Speed = 0;
-    int motor2Speed = speed+30;
+    int motor2Speed = speed+20;
 
     Serial.print(motor1Speed);
     Serial.print(",");
@@ -175,6 +175,46 @@ void loop() {
     delay(200);
   }
 
+// ----
+
+  else if (IR2state==0 & IR3state==1 & IR4state==1 & IR5state==1){
+    int motor1Speed = speed+20;
+    int motor2Speed = 0;
+
+    Serial.print(motor1Speed);
+    Serial.print(",");
+    Serial.println(motor2Speed);
+
+    while (IR5state==0){
+      IR5 = analogRead(IRSensor5); // Set the IR Sensor 5 as Input
+      IR5state = (IR5 > cutoffValue) ? 1 : 0;
+      myMotor1->setSpeed(motor1Speed);
+      myMotor2->setSpeed(motor2Speed); 
+    }
+    myMotor1->setSpeed(0);
+    myMotor2->setSpeed(speed);
+    delay(200);
+  }
+
+  else if (IR2state==0 & IR3state==0 & IR4state==1 & IR5state==1){
+    int motor1Speed = speed+20;
+    int motor2Speed = 0;
+
+    Serial.print(motor1Speed);
+    Serial.print(",");
+    Serial.println(motor2Speed);
+    
+    while (IR5state==0){
+      IR5 = analogRead(IRSensor5); // Set the IR Sensor 5 as Input
+      IR5state = (IR5 > cutoffValue) ? 1 : 0;
+      myMotor1->setSpeed(motor1Speed);
+      myMotor2->setSpeed(motor2Speed);
+    }
+
+    myMotor1->setSpeed(0);
+    myMotor2->setSpeed(speed);
+    delay(200);
+  }
   // Run motors
   myMotor1->run(FORWARD);
   myMotor2->run(FORWARD);
